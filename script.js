@@ -2,6 +2,7 @@ var selectedBlock = 'air';
 var audioElement;
 var context = new AudioContext(); // Create AudioContext instance // ? Przeniesione, aby zapobiedz ciągłemu tworzeniu nowego audio (po czasie dzwięk przestawał działać).
 var key;
+var volume = 1.0;
 
 function playSound(e) {
     key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
@@ -44,13 +45,16 @@ document.addEventListener('DOMContentLoaded', () => {
         })
     });
 
-    // ! Zmiana poziomu głośności nie dziala
-
     const volumeSlider = document.getElementById('volume-slider');
     const volumeImg = document.querySelector('.volume-img');
 
     volumeSlider.addEventListener('input', function(e) {
-        const volume = e.currentTarget.value / 100;
+        volume = e.currentTarget.value / 100;
+
+        const audios = document.querySelectorAll('audio');
+        audios.forEach(audio => {
+            audio.volume = volume;
+        });
 
         if (volume === 0) {
             volumeImg.innerHTML = "volume_off";
@@ -78,7 +82,11 @@ function playAudioWithPitch(audioElement, pitch, key) {
         .then(decodedData => {
             source.buffer = decodedData; // Set buffer source to decoded audio data
             source.playbackRate.value = pitch; // Set playback rate to the pitch value
-            source.connect(context.destination); // Connect source to destination (speakers)
+
+            var gainNode = context.createGain();
+            gainNode.gain.value = volume * 20;
+            source.connect(gainNode);
+            gainNode.connect(context.destination); // Connect source to destination (speakers)
 
             // Start playing audio
             source.start(0);
