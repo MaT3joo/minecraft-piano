@@ -89,18 +89,23 @@ img {
     background-color: var(--color-active);
 }
 
-img.note {
+.notes {
     position: absolute;
-    margin-bottom: 140px;
-    animation: 2s noteanim;
-    display: none;
-    height: 40px;
-    opacity: 100%;
+    margin-bottom: 168px;
+    background-image: url(image/notes.png);
+    background-repeat: no-repeat;
+    height: 32px;
+    width: 20px;
+    animation: 1s notesanim ease-in;
 }
 
-@keyframes noteanim {
-    0% {display: block; transform: translateY(-20px);}
-    100% {transform: translateY(-40px); opacity: 0%;}
+@keyframes notesanim {
+    0% {transform: translateY(0px);}
+    100% {transform: translateY(-20px); opacity: 0%;}
+} */
+
+.line-second .notes {
+    background-position-y: -32px;
 }
 
 .block-navbar {

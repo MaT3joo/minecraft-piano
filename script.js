@@ -1,31 +1,37 @@
 var selectedBlock = 'air';
-var audio;
+var audioElement;
 var context = new AudioContext(); // Create AudioContext instance // ? Przeniesione, aby zapobiedz ciągłemu tworzeniu nowego audio (po czasie dzwięk przestawał działać).
 var key;
 
 function playSound(e) {
     key = document.querySelector(`.key[data-key="${e.keyCode}"]`);
-    var pitch = key.getAttribute('data-pitch');
-    audio = document.querySelector(`audio[data-block="${selectedBlock}"]`);
     if (!key) return;
+    var pitch = key.getAttribute('data-pitch');
+    audioElement = document.querySelector(`audio[data-block="${selectedBlock}"]`);
 
     key.classList.add('active');
 
-    // let noteImg = document.createElement('img');
-    // noteImg.src = 'image/note.png';
-    // noteImg.className = 'note';
+    let notes = document.createElement('div');
+    notes.className = 'notes';
 
-    // keyDiv.appendChild(noteImg);
+    key.prepend(notes);
 
-    var note = key.querySelector('.note');
-    note.style.display = "block";
-    playAudioWithPitch(audio, pitch, key);
+    // var note = key.querySelector('.note');
+    // note.style.display = "block";
+    playAudioWithPitch(audioElement, pitch, key);
+    stopNoteAnimation(notes);
 };
 
+function stopNoteAnimation (notes) { 
+    // notes.remove();
+    notes.addEventListener("animationend", (event) => {
+        notes.remove();
+    });
+};
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', () => {
     const blocks = document.querySelectorAll(`.block`);
-
+    
     blocks.forEach(function(block) {
         block.addEventListener('click', function(e) {
             var blockData = block.getAttribute('data-block');
@@ -34,14 +40,16 @@ document.addEventListener('DOMContentLoaded', function() {
             const img = document.querySelector(`.chosen-img`);
             img.src = "/image/" + selectedBlock + ".png";
             
-            audio = document.querySelector(`audio[data-block="${selectedBlock}"]`);
+            audioElement = document.querySelector(`audio[data-block="${selectedBlock}"]`);
         })
     });
 
     // ! Zmiana poziomu głośności nie dziala
+
     const volumeSlider = document.getElementById('volume-slider');
     const volumeImg = document.querySelector('.volume-img');
-    volumeSlider.addEventListener("input", function(e) {
+
+    volumeSlider.addEventListener('input', function(e) {
         const volume = e.currentTarget.value / 100;
 
         if (volume === 0) {
@@ -78,8 +86,8 @@ function playAudioWithPitch(audioElement, pitch, key) {
             // Event listener to remove 'active' class after audio playback ends
             source.onended = function() {
                 key.classList.remove('active');
-                var note = key.querySelector(`.note`);
-                note.style.display = "none";
+                // var note = key.querySelector(`.note`);
+                // note.style.display = "none";
             };
         })
         .catch(error => {
