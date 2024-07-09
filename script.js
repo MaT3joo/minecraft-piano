@@ -10,11 +10,14 @@ function playSound(e) {
     var pitch = key.getAttribute('data-pitch');
     audioElement = document.querySelector(`audio[data-block="${selectedBlock}"]`);
 
+    
     key.classList.add('active');
-
+    var notePos = key.getAttribute('data-pos');
+    console.log(notePos);
+    
     let notes = document.createElement('div');
     notes.className = 'notes';
-
+    notes.style.backgroundPosition = notePos;
     key.prepend(notes);
 
     // var note = key.querySelector('.note');
